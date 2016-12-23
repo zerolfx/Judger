@@ -19,7 +19,7 @@ def _compile():
 
 
 def run(use_sandbox, use_nobody):
-    print "compile result: ", _compile()
+    print("compile result: ", _compile())
     path = os.path.join(base_path, "demo")
     return judger.run(path=path,
                       in_file=os.path.join(base_path, "in"),
@@ -37,13 +37,13 @@ def run(use_sandbox, use_nobody):
                       use_nobody=use_nobody)
 
 
-print "sandbox and nobody"
-print run(use_sandbox=True, use_nobody=True)
+print("sandbox and nobody")
+print(run(use_sandbox=True, use_nobody=True))
 
-print '\n\nno sandbox and root'
-print run(use_sandbox=False, use_nobody=False)
-print "\n\nout: ", open("out").read()
+print('\n\nno sandbox and root')
+print(run(use_sandbox=False, use_nobody=False))
+print("\n\nout: ", open("out").read())
 
-print "\n\nno sandbox and nobody"
-print run(use_sandbox=False, use_nobody=True)
-print "\n\nout: ", open("out").read()
+print("\n\nno sandbox and nobody")
+print(run(use_sandbox=False, use_nobody=True))
+print("\n\nout: ", open("out").read())

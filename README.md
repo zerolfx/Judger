@@ -1,6 +1,7 @@
 
 #Judger [![Build Status](https://travis-ci.org/QingdaoU/Judger.svg?branch=master)](https://travis-ci.org/QingdaoU/Judger)
 
+**新特性：支持Python3.5（不支持Python2）**
 
 OnlineJudge 判题沙箱
 
@@ -11,8 +12,8 @@ OnlineJudge 判题沙箱
 见 demo 
 
 ```
-sudo python setup.py install
-cd demo && sudo python demo.py
+sudo python3 setup.py install
+cd demo && sudo python3 demo.py
 ```
 
 ##C语言 api 使用方法

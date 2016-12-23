@@ -1,10 +1,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include <python2.7/Python.h>
+#include <python3.5/Python.h>
 #include "runner.h"
 
 #define RaiseValueError(msg)  {PyErr_SetString(PyExc_ValueError, msg); return NULL;}
+
 
 
 static PyObject *judger_run(PyObject *self, PyObject *args, PyObject *kwargs) {
@@ -50,10 +51,10 @@ static PyObject *judger_run(PyObject *self, PyObject *args, PyObject *kwargs) {
             if (!next) {
                 break;
             }
-            if (!PyString_Check(next) && !PyUnicode_Check(next)) {
+            if (!PyUnicode_Check(next)) {
                 RaiseValueError("arg in args must be a string");
             }
-            config.args[count] = PyString_AsString(next);
+            config.args[count] = PyUnicode_AsUTF8(next);
             count++;
             if(count > 95) {
                 RaiseValueError("Number of args must < 95");
@@ -73,10 +74,10 @@ static PyObject *judger_run(PyObject *self, PyObject *args, PyObject *kwargs) {
             if (!next) {
                 break;
             }
-            if (!PyString_Check(next) && !PyUnicode_Check(next)) {
+            if (!PyUnicode_Check(next)) {
                 RaiseValueError("env item must be a string");
             }
-            config.env[count] = PyString_AsString(next);
+            config.env[count] = PyUnicode_AsUTF8(next);
             count++;
             if(count > 95) {
                 RaiseValueError("Number of env must < 95");
@@ -116,10 +117,10 @@ static PyObject *judger_run(PyObject *self, PyObject *args, PyObject *kwargs) {
     }
 
     if (log_path != NULL) {
-        if (!PyString_Check(log_path)) {
+        if (!PyUnicode_Check(log_path)) {
             RaiseValueError("log path must be a string");
         }
-        config.log_path = PyString_AsString(log_path);
+        config.log_path = PyUnicode_AsUTF8(log_path);
     }
     else {
         config.log_path = "judger.log";
@@ -138,13 +139,16 @@ static PyObject *judger_run(PyObject *self, PyObject *args, PyObject *kwargs) {
 
 
 static PyMethodDef judger_methods[] = {
-        {"run", (PyCFunction) judger_run, METH_KEYWORDS, NULL},
+        {"run", (PyCFunction) judger_run, METH_VARARGS | METH_KEYWORDS, NULL},
         {NULL, NULL, 0, NULL}
 };
 
 
-PyMODINIT_FUNC initjudger(void) {
-    PyObject *module = Py_InitModule3("judger", judger_methods, NULL);
+PyMODINIT_FUNC PyInit_judger(void) {
+    static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT, "judger", NULL, -1, judger_methods, };
+    PyObject *module= PyModule_Create(&moduledef);
+    //PyObject *module = PyModule_Create("judger", judger_methods, NULL);
     PyModule_AddIntConstant(module, "CPU_TIME_UNLIMITED", CPU_TIME_UNLIMITED);
     PyModule_AddIntConstant(module, "MEMORY_UNLIMITED", MEMORY_UNLIMITED);
+    return module;
 }

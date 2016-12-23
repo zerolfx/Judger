@@ -29,22 +29,31 @@ class JudgerTest(TestCase):
                 int(i)
             except Exception:
                 continue
-            print "\n\nRunning test: ", i
+            print("\n\nRunning test: ", i)
             test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), str(i))
             exe_path = os.path.join(self.tmp_path, str(i))
-            config = json.loads(open(os.path.join(test_dir, "config")).read())
+            # config = json.loads(open(os.path.join(test_dir, "config")).read())
+            with open(os.path.join(test_dir, "config")) as f:
+                config = json.load(f)
             self.assertEqual(self.compile_src(os.path.join(test_dir, "Main.c"), config.pop("language"), exe_path), 0)
 
             run_result = judger.run(path=exe_path,
                                     in_file=os.path.join(test_dir, "in"),
                                     out_file=os.path.join(self.tmp_path, str(i) + ".out"),
                                     **config)
-            result = json.loads(open(os.path.join(test_dir, "result")).read())
-            print run_result
+            # result = json.loads(open(os.path.join(test_dir, "result")).read())
+            with open(os.path.join(test_dir, "result")) as f:
+                result = json.load(f)
+            print(run_result)
             self.assertEqual(result["flag"], run_result["flag"])
             self.assertEqual(result["signal"], run_result["signal"])
-            self.assertEqual(open(os.path.join(test_dir, "out")).read(),
-                             open(os.path.join(self.tmp_path, str(i) + ".out")).read())
+            #self.assertEqual(open(os.path.join(test_dir, "out")).read(),
+                             #open(os.path.join(self.tmp_path, str(i) + ".out")).read())
+            f1 = open(os.path.join(test_dir, "out"))
+            f2 = open(os.path.join(self.tmp_path, str(i) + ".out"))
+            self.assertEqual(f1.read(), f2.read())
+            f1.close()
+            f2.close()
         self._judger_cpu_time_args_check()
         self._judger_memory_args_check()
         self._judger_exec_file_args_check()
